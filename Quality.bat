@@ -1,0 +1,1 @@
+echo "This is Quality file : %date% : %time%"
