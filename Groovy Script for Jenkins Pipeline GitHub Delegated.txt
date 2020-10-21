@@ -1,0 +1,55 @@
+pipeline {
+  agent {
+	label 'Windows_Node'
+  }
+  stages{
+	stage('Git-Checkout'){
+		steps {
+			echo "Checking out from Git Repo";
+			git credentialsId: '4ccb51c6-9779-4843-b888-63547acbcd6a', url: 'https://github.com/praveenb4/bat_files_pipelines.git'
+		}
+	}  
+	stage('Build'){
+		steps {
+			echo "Building the Checked-out project";
+			bat 'Build.bat'
+		}
+	}  
+	stage('Unit-Test'){
+		steps {
+			echo "Running JUnit Tests";
+			bat 'Unit.bat'
+		}
+	}  
+	stage('Quality-Gate'){
+		steps {
+			echo "Verifying Quality-Gate";
+			bat 'Quality.bat'
+		}
+	}  
+	stage('Deploy'){
+		steps {
+			echo "Deploying to stage environment for more tests";
+			bat 'Deploy.bat'
+		}
+	}  
+  }
+  post {
+	always {
+		echo "This will always run";
+	}
+	success {
+		echo "This will run only if success";
+	}
+	failure {
+		echo "This will run only if failure";
+	}
+	unstable {
+		echo "This will run only if the run was marked unstable";
+	}
+	changed {
+		echo "This will run only if the state of pipeline changed";
+		echo "For example, if the pipeline was previously failure but is now success";
+	}
+  }
+}
